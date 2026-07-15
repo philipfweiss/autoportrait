@@ -300,20 +300,6 @@ async function busy(btn, label, fn) {
   }
 }
 
-$("png").addEventListener("click", () =>
-  busy($("png"), "saving…", async () => {
-    const p = state.painting;
-    if (!p || !state.total) return;
-    const wasTime = p.time;
-    p.pause();
-    p.seek(state.total);
-    const blob = await new Promise((r) => canvas.toBlob(r, "image/png"));
-    download(blob, `autoportrait-${$("seed").value}.png`);
-    p.seek(wasTime);
-    if (!state.paused) p.resume();
-  }),
-);
-
 $("gif").addEventListener("click", () =>
   busy($("gif"), "rendering…", async () => {
     const p = state.painting;
