@@ -43,6 +43,13 @@
             <span class="time" id="time">0.0s / 0.0s</span>
           </div>
 
+          <div class="run-row">
+            <button id="paint" type="button" class="primary" title="repaint (r)">
+              paint again
+            </button>
+            <button id="finish" type="button">skip to end</button>
+          </div>
+
           <div class="regions">
             <p
               class="regions-head"
@@ -88,16 +95,53 @@
               </button>
             </div>
             <div class="row">
-              <label class="file">
+              <label
+                class="file"
+                title="Upload any image. Painterly input (watercolor, oils) looks best; a plain photo still works."
+              >
                 <input type="file" id="imageFile" accept="image/*" />
-                <span>&#8613; picture</span>
+                <span>
+                  <svg
+                    width="13"
+                    height="13"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="2"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    aria-hidden="true"
+                  >
+                    <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+                    <polyline points="17 8 12 3 7 8" />
+                    <line x1="12" y1="3" x2="12" y2="15" />
+                  </svg>
+                  upload picture
+                </span>
               </label>
               <label
                 class="file"
-                title="Optional: white subject on black, made with tools/make_mask.py. Lets the background paint behind a finished subject."
+                title="Optional: a mask with the subject in white on black, made with tools/make_mask.py. Lets the background paint behind a finished subject and enables the face label."
               >
                 <input type="file" id="maskFile" accept="image/*" />
-                <span>&#8613; figure mask</span>
+                <span>
+                  <svg
+                    width="13"
+                    height="13"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="2"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    aria-hidden="true"
+                  >
+                    <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+                    <polyline points="17 8 12 3 7 8" />
+                    <line x1="12" y1="3" x2="12" y2="15" />
+                  </svg>
+                  upload figure mask
+                </span>
               </label>
             </div>
           </fieldset>
@@ -173,19 +217,42 @@
           </fieldset>
 
           <fieldset>
-            <legend>run &amp; export</legend>
+            <legend>export</legend>
             <div class="row">
-              <button id="paint" type="button" class="primary" title="repaint (r)">
-                paint again
+              <button id="gif" type="button" title="renders the timeline offscreen">
+                <svg
+                  width="13"
+                  height="13"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  aria-hidden="true"
+                >
+                  <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+                  <polyline points="7 10 12 15 17 10" />
+                  <line x1="12" y1="15" x2="12" y2="3" />
+                </svg>
+                GIF
               </button>
-              <button id="finish" type="button">skip to end</button>
-              <button id="share" type="button" title="copy a link that reproduces these dials">
-                copy link
-              </button>
-            </div>
-            <div class="row">
-              <button id="gif" type="button" title="renders the timeline offscreen">GIF</button>
               <button id="video" type="button" title="records a live replay at real duration">
+                <svg
+                  width="13"
+                  height="13"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  aria-hidden="true"
+                >
+                  <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+                  <polyline points="7 10 12 15 17 10" />
+                  <line x1="12" y1="15" x2="12" y2="3" />
+                </svg>
                 video
               </button>
               <button
@@ -193,9 +260,45 @@
                 type="button"
                 title="a self-contained page that repaints this exact painting"
               >
+                <svg
+                  width="13"
+                  height="13"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  aria-hidden="true"
+                >
+                  <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+                  <polyline points="7 10 12 15 17 10" />
+                  <line x1="12" y1="15" x2="12" y2="3" />
+                </svg>
                 HTML
               </button>
+              <button id="share" type="button" title="copy a link that reproduces these dials">
+                <svg
+                  width="13"
+                  height="13"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  aria-hidden="true"
+                >
+                  <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71" />
+                  <path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71" />
+                </svg>
+                copy link
+              </button>
             </div>
+            <p class="hint">
+              Everything runs in your browser. Uploaded pictures never leave your machine and
+              nothing is stored.
+            </p>
           </fieldset>
         </aside>
       </div>

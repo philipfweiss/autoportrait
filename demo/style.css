@@ -149,6 +149,13 @@ h1 .sub {
   font-size: 0.8rem;
 }
 
+.run-row {
+  display: flex;
+  justify-content: center;
+  gap: 0.5rem;
+  margin-top: 0.55rem;
+}
+
 .regions {
   margin-top: 0.8rem;
 }
@@ -318,10 +325,29 @@ button {
   border-radius: 5px;
   padding: 0.34rem 0.7rem;
   cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
   transition:
     border-color 0.15s,
     background 0.15s,
     box-shadow 0.15s;
+}
+
+button svg {
+  flex: none;
+  color: var(--faded);
+}
+
+button.primary svg {
+  color: #fff;
+}
+
+.hint {
+  font-size: 0.76rem;
+  color: var(--faded);
+  margin: 0.5rem 0 0;
+  line-height: 1.4;
 }
 
 button:hover:not(:disabled) {
@@ -367,13 +393,20 @@ button.ghost:hover:not(:disabled) {
 }
 
 .file span {
-  display: inline-block;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
   border: 1px solid var(--rule);
   border-radius: 5px;
   padding: 0.34rem 0.7rem;
   cursor: pointer;
   background: #fff;
   transition: border-color 0.15s;
+}
+
+.file svg {
+  flex: none;
+  color: var(--faded);
 }
 
 .file span:hover {
