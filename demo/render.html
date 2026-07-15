@@ -52,7 +52,9 @@
         return { W, H, colorL, field, regions };
       }
 
-      /** Frames of the painting at chosen fractions, composed as a grid. */
+      /** Frames of the painting at chosen fractions, composed as a grid.
+          Each frame is bordered by the act it belongs to (underdrawing,
+          washes, drying), with a legend beneath. */
       window.renderStages = async (fracs, cols = 5) => {
         const canvas = document.getElementById("c");
         const p = paint(canvas, {
@@ -63,21 +65,52 @@
           respectReducedMotion: false,
         });
         await p.ready;
+
+        // act boundaries from the default configuration
+        const sketchEnd = (13 + 2) / p.total;
+        const dryStart = (p.total - 2.4 - 0.4) / p.total;
+        const acts = [
+          { name: "underdrawing", color: "#6b6257", until: sketchEnd },
+          { name: "washes", color: "#a75b34", until: dryStart },
+          { name: "drying", color: "#3e7d74", until: Infinity },
+        ];
+        const actOf = (f) => acts.find((a) => f <= a.until) || acts[acts.length - 1];
+
         const cell = 480;
-        const gap = 8;
+        const gap = 10;
+        const border = 7;
+        const legendH = 84;
         const rows = Math.ceil(fracs.length / cols);
         const grid = document.createElement("canvas");
         grid.width = cell * cols + gap * (cols - 1);
-        grid.height = cell * rows + gap * (rows - 1);
+        grid.height = cell * rows + gap * (rows - 1) + legendH;
         const sx = grid.getContext("2d");
         sx.fillStyle = "#ffffff";
         sx.fillRect(0, 0, grid.width, grid.height);
+
         fracs.forEach((f, i) => {
           p.seek(f * p.total);
-          const col = i % cols;
-          const row = (i / cols) | 0;
-          sx.drawImage(canvas, col * (cell + gap), row * (cell + gap), cell, cell);
+          const x = (i % cols) * (cell + gap);
+          const y = ((i / cols) | 0) * (cell + gap);
+          sx.fillStyle = actOf(f).color;
+          sx.fillRect(x, y, cell, cell);
+          sx.drawImage(canvas, x + border, y + border, cell - 2 * border, cell - 2 * border);
         });
+
+        // legend, centered under the grid
+        sx.font = "600 34px ui-sans-serif, system-ui";
+        sx.textBaseline = "middle";
+        const entryW = (a) => 46 + 14 + sx.measureText(a.name).width;
+        const totalW = acts.reduce((s, a) => s + entryW(a), 0) + 70 * (acts.length - 1);
+        let lx = (grid.width - totalW) / 2;
+        const ly = grid.height - legendH / 2 + 8;
+        for (const a of acts) {
+          sx.fillStyle = a.color;
+          sx.fillRect(lx, ly - 23, 46, 46);
+          sx.fillStyle = "#3b3630";
+          sx.fillText(a.name, lx + 60, ly);
+          lx += entryW(a) + 70;
+        }
         return grid.toDataURL("image/png");
       };
 

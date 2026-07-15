@@ -18,7 +18,9 @@ await withPage(async (page, errors, base) => {
   save(
     "stages.png",
     await page.evaluate(() =>
-      window.renderStages([0.05, 0.12, 0.2, 0.28, 0.34, 0.44, 0.55, 0.68, 0.82, 1]),
+      window.renderStages([
+        0.03, 0.08, 0.13, 0.19, 0.25, 0.31, 0.38, 0.45, 0.52, 0.6, 0.68, 0.76, 0.85, 0.93, 1,
+      ]),
     ),
   );
   save("edge-field.png", await page.evaluate(() => window.renderEdgeField()));

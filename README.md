@@ -151,7 +151,7 @@ against a clock). Because planning happens up front, seeking and
 reproducibility come for free.
 
 <p align="center">
-  <img src="docs/media/stages.png" alt="Ten stages of the painting: early sketch, full sketch, figure washes over the drawing, background arriving, the finished painting." />
+  <img src="docs/media/stages.png" alt="Fifteen stages of the painting: early sketch, full sketch, figure washes over the drawing, background arriving, the finished painting." />
 </p>
 
 ### 1. Underdrawing
