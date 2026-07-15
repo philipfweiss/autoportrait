@@ -83,6 +83,20 @@ npm install github:philipfweiss/autoportrait
 The returned object exposes `pause()`, `resume()`, `seek(t)`, `repaint()`,
 `finish()`, `palette()`, `dispose()`, and a `ready` promise.
 
+In React (or any framework), the same call runs in a mount effect; there is
+no framework wrapper to install:
+
+```jsx
+function Portrait({ image, seed }) {
+  const ref = useRef(null);
+  useEffect(() => {
+    const painting = paint(ref.current, { image, seed });
+    return () => painting.dispose();
+  }, [image, seed]);
+  return <canvas ref={ref} />;
+}
+```
+
 Input quality notes:
 
 - The engine performs the input's pixels without restyling them. Any image
