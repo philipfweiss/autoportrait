@@ -15,6 +15,9 @@ runs entirely client side, the full stroke plan is computed before the first
 frame, and a seeded PRNG makes every performance reproducible and seekable.
 There are no dependencies and no runtime ML.
 
+autoportrait does not generate a painting. It generates a deterministic
+painting performance for an existing image.
+
 I love timelapses of painters at work, and I wondered whether the effect
 could be replicated in software: the underdrawing going down first, the
 washes pooling, the subject finished before the world behind it. The visual
