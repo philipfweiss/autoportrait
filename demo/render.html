@@ -225,6 +225,31 @@
         return crop.toDataURL("image/png");
       };
 
+      /** Paint any image with any options and return snapshots at the given
+          fractions. The workhorse for testing the engine across image types. */
+      window.paintTo = async (src, opts, fracs, outSize = 500) => {
+        const canvas = document.getElementById("c");
+        const p = paint(canvas, {
+          image: src,
+          autostart: false,
+          respectReducedMotion: false,
+          ...opts,
+        });
+        await p.ready;
+        const shots = [];
+        const s = document.createElement("canvas");
+        for (const f of fracs) {
+          p.seek(f * p.total);
+          const scale = outSize / Math.max(canvas.width, canvas.height);
+          s.width = Math.round(canvas.width * scale);
+          s.height = Math.round(canvas.height * scale);
+          s.getContext("2d").drawImage(canvas, 0, 0, s.width, s.height);
+          shots.push(s.toDataURL("image/jpeg", 0.9));
+        }
+        p.dispose();
+        return shots;
+      };
+
       /** The hero: the whole performance encoded as a gif, returned base64.
           The gif plays at the painting's real duration: frame delays sum to
           p.total, so the README shows the same performance a visitor gets. */

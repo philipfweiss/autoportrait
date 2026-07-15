@@ -70,9 +70,10 @@ The returned object exposes `pause()`, `resume()`, `seek(t)`, `repaint()`,
 
 Input quality notes:
 
-- The engine performs the input's pixels without restyling them, so a raw
-  photograph paints like a photograph. Painterly input produces painterly
-  output. See [preparing the input](#preparing-the-input).
+- The engine performs the input's pixels without restyling them. Any image
+  works, and plain photographs come out respectably, since the sketch and the
+  region-by-region reveal carry the effect. Input that already looks like
+  watercolor looks the best. See [preparing the input](#preparing-the-input).
 - `prefers-reduced-motion` visitors get the finished painting immediately
   (configurable via `respectReducedMotion`).
 
