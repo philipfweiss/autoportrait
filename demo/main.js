@@ -26,6 +26,7 @@ const state = {
   painting: null,
   total: 0,
   schedule: [],
+  paper: "#fbf6ea",
   chipFor: new Map(),
   scrubbing: false,
   paused: false,
@@ -42,7 +43,7 @@ function currentOptions() {
     regions: { k: Number($("k").value) },
     brushes: { big: Number($("big").value), small: Number($("small").value) },
     acts: { sketch: Number($("sketch").value), wash: Number($("wash").value) },
-    paper: $("paper").value,
+    paper: state.paper,
     respectReducedMotion: false,
     onCaption: (text) => ($("caption").textContent = text),
     onProgress: (t, total) => {
@@ -54,6 +55,7 @@ function currentOptions() {
       state.total = total;
       state.schedule = schedule.filter((g) => g.kind === "wash" && g.region);
       renderLegend(regions);
+      renderActsBar(schedule, total);
     },
   };
 }
@@ -85,6 +87,19 @@ function highlightActive(t) {
   let active = null;
   for (const g of state.schedule) if (t >= g.t0 && t <= g.t1) active = g.region;
   for (const [name, chip] of state.chipFor) chip.classList.toggle("painting", name === active);
+}
+
+/* the act track under the scrubber: the same colors as the README legend */
+function renderActsBar(schedule, total) {
+  const sketchEnd = Math.max(0, ...schedule.filter((g) => g.kind === "sketch").map((g) => g.t1));
+  const washEnd = Math.max(
+    sketchEnd,
+    ...schedule.filter((g) => g.kind === "wash").map((g) => g.t1),
+  );
+  const a = ((sketchEnd / total) * 100).toFixed(1);
+  const b = ((washEnd / total) * 100).toFixed(1);
+  $("acts").style.background =
+    `linear-gradient(to right, #6b6257 0 ${a}%, #a75b34 ${a}% ${b}%, #3e7d74 ${b}% 100%)`;
 }
 
 /* ---------- focus pins ---------- */
@@ -146,8 +161,20 @@ for (const [id, out, fmt] of [
   $(id).addEventListener("change", start);
 }
 $("preset").addEventListener("change", start);
-$("paper").addEventListener("change", start);
 $("seed").addEventListener("change", start);
+for (const btn of document.querySelectorAll("#papers button")) {
+  btn.style.background = btn.dataset.paper;
+  btn.addEventListener("click", () => {
+    state.paper = btn.dataset.paper;
+    markPaper();
+    start();
+  });
+}
+function markPaper() {
+  for (const b of document.querySelectorAll("#papers button"))
+    b.classList.toggle("active", b.dataset.paper === state.paper);
+}
+markPaper();
 $("dice").addEventListener("click", rollSeed);
 $("paint").addEventListener("click", start);
 $("finish").addEventListener("click", () => state.painting?.finish());
@@ -251,64 +278,6 @@ document.addEventListener("keydown", (e) => {
   }
 });
 
-/* ---------- share links ---------- */
-
-function encodeShare() {
-  const q = new URLSearchParams();
-  if (state.sample) q.set("img", state.sample);
-  q.set("seed", $("seed").value);
-  q.set("preset", $("preset").value);
-  for (const id of ["tempo", "k", "big", "small", "sketch", "wash"]) q.set(id, $(id).value);
-  q.set("paper", $("paper").value);
-  if (state.focus.length)
-    q.set("focus", state.focus.map((f) => `${f.x.toFixed(3)},${f.y.toFixed(3)}`).join(";"));
-  return `${location.origin}${location.pathname}#${q}`;
-}
-
-function applyShare() {
-  if (!location.hash.length) return;
-  const q = new URLSearchParams(location.hash.slice(1));
-  const img = q.get("img");
-  if (img && SAMPLES[img]) {
-    state.sample = img;
-    Object.assign(state, SAMPLES[img]);
-  }
-  for (const id of ["seed", "preset", "tempo", "k", "big", "small", "sketch", "wash", "paper"]) {
-    if (q.has(id)) $(id).value = q.get(id);
-  }
-  for (const [id, out, fmt] of [
-    ["tempo", "tempoOut", (v) => `${Number(v).toFixed(1)}×`],
-    ["k", "kOut", (v) => v],
-    ["big", "bigOut", (v) => v],
-    ["small", "smallOut", (v) => v],
-    ["sketch", "sketchOut", (v) => `${v}s`],
-    ["wash", "washOut", (v) => `${v}s`],
-  ])
-    $(out).textContent = fmt($(id).value);
-  if (q.has("focus"))
-    state.focus = q
-      .get("focus")
-      .split(";")
-      .map((s) => {
-        const [x, y] = s.split(",").map(Number);
-        return { x, y };
-      });
-}
-
-$("share").addEventListener("click", async () => {
-  const url = encodeShare();
-  history.replaceState(null, "", url);
-  try {
-    await navigator.clipboard.writeText(url);
-    const btn = $("share");
-    const was = btn.textContent;
-    btn.textContent = "copied";
-    setTimeout(() => (btn.textContent = was), 1200);
-  } catch {
-    /* the hash is in the address bar either way */
-  }
-});
-
 /* ---------- exports ---------- */
 
 function download(blob, name) {
@@ -330,6 +299,20 @@ async function busy(btn, label, fn) {
     btn.textContent = was;
   }
 }
+
+$("png").addEventListener("click", () =>
+  busy($("png"), "saving…", async () => {
+    const p = state.painting;
+    if (!p || !state.total) return;
+    const wasTime = p.time;
+    p.pause();
+    p.seek(state.total);
+    const blob = await new Promise((r) => canvas.toBlob(r, "image/png"));
+    download(blob, `autoportrait-${$("seed").value}.png`);
+    p.seek(wasTime);
+    if (!state.paused) p.resume();
+  }),
+);
 
 $("gif").addEventListener("click", () =>
   busy($("gif"), "rendering…", async () => {
@@ -427,7 +410,7 @@ $("html").addEventListener("click", () =>
       regions: { k: Number($("k").value) },
       brushes: { big: Number($("big").value), small: Number($("small").value) },
       acts: { sketch: Number($("sketch").value), wash: Number($("wash").value) },
-      paper: $("paper").value,
+      paper: state.paper,
     };
     const html = `<!doctype html>
 <html lang="en">
@@ -449,7 +432,7 @@ paint(document.getElementById("autoportrait"), ${JSON.stringify(opts, null, 2)})
 
 /* ---------- boot ---------- */
 
-applyShare();
+markPaper();
 markSample(state.sample ? document.querySelector(`[data-sample="${state.sample}"]`) : null);
 renderPins();
 start();

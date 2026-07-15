@@ -31,15 +31,23 @@
             >
               &#10074;&#10074;
             </button>
-            <input
-              type="range"
-              id="scrub"
-              min="0"
-              max="1000"
-              value="0"
-              step="1"
-              aria-label="scrub through the painting"
-            />
+            <span class="scrub-wrap">
+              <input
+                type="range"
+                id="scrub"
+                min="0"
+                max="1000"
+                value="0"
+                step="1"
+                aria-label="scrub through the painting"
+              />
+              <span
+                class="acts"
+                id="acts"
+                title="the acts: underdrawing, washes, drying"
+                aria-hidden="true"
+              ></span>
+            </span>
             <span class="time" id="time">0.0s / 0.0s</span>
           </div>
 
@@ -213,7 +221,20 @@
                 ></label
               >
             </div>
-            <label>paper <input type="color" id="paper" value="#fbf6ea" /></label>
+            <label
+              >paper
+              <span class="papers" id="papers">
+                <button
+                  type="button"
+                  data-paper="#fbf6ea"
+                  title="warm cream (the default)"
+                ></button>
+                <button type="button" data-paper="#fefefc" title="bright white"></button>
+                <button type="button" data-paper="#eee9df" title="cold-press gray"></button>
+                <button type="button" data-paper="#f3e6cf" title="toned sand"></button>
+                <button type="button" data-paper="#f2e4e0" title="pale blush"></button>
+              </span>
+            </label>
           </fieldset>
 
           <fieldset>
@@ -255,6 +276,24 @@
                 </svg>
                 video
               </button>
+              <button id="png" type="button" title="the finished painting as a still image">
+                <svg
+                  width="13"
+                  height="13"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  aria-hidden="true"
+                >
+                  <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+                  <polyline points="7 10 12 15 17 10" />
+                  <line x1="12" y1="15" x2="12" y2="3" />
+                </svg>
+                PNG
+              </button>
               <button
                 id="html"
                 type="button"
@@ -276,23 +315,6 @@
                   <line x1="12" y1="15" x2="12" y2="3" />
                 </svg>
                 HTML
-              </button>
-              <button id="share" type="button" title="copy a link that reproduces these dials">
-                <svg
-                  width="13"
-                  height="13"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  stroke-width="2"
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                  aria-hidden="true"
-                >
-                  <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71" />
-                  <path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71" />
-                </svg>
-                copy link
               </button>
             </div>
             <p class="hint">
