@@ -1,0 +1,38 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>autoportrait test fixture</title>
+  </head>
+  <body>
+    <canvas id="c"></canvas>
+    <script type="module">
+      import { paint } from "../src/index.js";
+
+      // Paint with a fixed seed, seek a set of checkpoints, hash the canvas at
+      // each. The smoke test asserts the hashes are stable run to run and that
+      // a different seed produces a different painting.
+      window.run = async (seed) => {
+        const canvas = document.getElementById("c");
+        const p = paint(canvas, {
+          image: "./philip.jpg",
+          mask: "./philip-mask.png",
+          seed,
+          autostart: false,
+          respectReducedMotion: false,
+        });
+        await p.ready;
+        const hashes = [];
+        for (const frac of [0.12, 0.3, 0.55, 0.8, 1]) {
+          p.seek(frac * p.total);
+          const d = canvas.getContext("2d").getImageData(0, 0, canvas.width, canvas.height).data;
+          let h = 0;
+          for (let i = 0; i < d.length; i += 97) h = (h * 31 + d[i]) >>> 0;
+          hashes.push(h);
+        }
+        p.dispose();
+        return hashes;
+      };
+    </script>
+  </body>
+</html>
