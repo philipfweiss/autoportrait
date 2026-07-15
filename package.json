@@ -1,0 +1,35 @@
+{
+  "name": "autoportrait",
+  "version": "0.1.0",
+  "description": "A canvas library that paints your picture in front of the visitor: graphite first, then watercolor, one pigment at a time.",
+  "type": "module",
+  "main": "src/index.js",
+  "exports": {
+    ".": "./src/index.js"
+  },
+  "files": [
+    "src"
+  ],
+  "scripts": {
+    "dev": "vite demo",
+    "build": "vite build demo",
+    "preview": "vite preview demo",
+    "test": "node test/smoke.mjs",
+    "figures": "node tools/figures.mjs",
+    "hero": "node tools/hero.mjs",
+    "format": "prettier --write \"**/*.{js,mjs,css,html,md,json,yml}\"",
+    "format:check": "prettier --check \"**/*.{js,mjs,css,html,md,json,yml}\""
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/philipfweiss/autoportrait.git"
+  },
+  "author": "Philip Weiss <philipfweiss@gmail.com>",
+  "license": "MIT",
+  "devDependencies": {
+    "gifenc": "^1.0.3",
+    "playwright": "^1.61.0",
+    "prettier": "^3.6.0",
+    "vite": "^7.3.5"
+  }
+}
