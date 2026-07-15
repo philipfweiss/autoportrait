@@ -124,6 +124,16 @@ $("useDemo").addEventListener("click", () => {
   start();
 });
 
+// public-domain paintings: already painterly, so the automatic path shines
+for (const btn of document.querySelectorAll("[data-stock]")) {
+  btn.addEventListener("click", () => {
+    state.image = "./" + btn.dataset.stock;
+    state.mask = null;
+    state.focus = [];
+    start();
+  });
+}
+
 canvas.addEventListener("click", (e) => {
   if (!$("focusMode").checked) return;
   const r = canvas.getBoundingClientRect();
