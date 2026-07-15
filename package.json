@@ -2,11 +2,24 @@
   "name": "autoportrait",
   "version": "0.1.0",
   "description": "A canvas library that paints your picture in front of the visitor: graphite first, then watercolor, one pigment at a time.",
+  "keywords": [
+    "canvas",
+    "watercolor",
+    "painting",
+    "animation",
+    "generative-art",
+    "portrait",
+    "timelapse",
+    "k-means",
+    "image-segmentation"
+  ],
+  "homepage": "https://philipweiss.net/autoportrait/",
   "type": "module",
   "main": "src/index.js",
   "exports": {
     ".": "./src/index.js"
   },
+  "sideEffects": false,
   "files": [
     "src"
   ],
@@ -23,6 +36,9 @@
   "repository": {
     "type": "git",
     "url": "https://github.com/philipfweiss/autoportrait.git"
+  },
+  "bugs": {
+    "url": "https://github.com/philipfweiss/autoportrait/issues"
   },
   "author": "Philip Weiss <philipfweiss@gmail.com>",
   "license": "MIT",
