@@ -10,18 +10,15 @@
     <main class="page">
       <header>
         <h1>autoportrait <span class="sub">playground</span></h1>
-        <p class="tag">
-          Pick a sample or upload a picture, set the choreography, and watch the engine paint it.
-          Same seed, same painting.
-          <a href="https://github.com/philipfweiss/autoportrait"
-            >github.com/philipfweiss/autoportrait</a
-          >
-        </p>
+        <a class="gh" href="https://github.com/philipfweiss/autoportrait">GitHub &nearr;</a>
       </header>
 
       <div class="split">
         <section class="stage">
-          <canvas id="canvas" width="1000" height="1000"></canvas>
+          <div class="canvas-wrap">
+            <canvas id="canvas" width="1000" height="1000"></canvas>
+            <div class="pins" id="pins"></div>
+          </div>
           <p class="caption" id="caption">&nbsp;</p>
 
           <div class="timeline">
@@ -29,10 +26,10 @@
               id="pause"
               type="button"
               class="icon"
-              title="pause / resume"
+              title="pause / resume (space)"
               aria-label="pause or resume"
             >
-              ❚❚
+              &#10074;&#10074;
             </button>
             <input
               type="range"
@@ -49,9 +46,9 @@
           <div class="regions">
             <p
               class="regions-head"
-              title="The clusters the segmentation found. Paint order follows the preset, the order list, or your focus points."
+              title="The clusters the segmentation found, numbered in paint order. The lit chip is being painted right now."
             >
-              detected regions
+              regions, in paint order
             </p>
             <div class="legend" id="legend"></div>
           </div>
@@ -66,46 +63,43 @@
                 type="button"
                 title="the demo portrait, with figure mask"
               >
-                <img src="./philip.jpg" alt="" /><span>demo portrait</span>
+                <img data-src="philip.jpg" alt="" /><span>demo</span>
               </button>
               <button
                 data-sample="vermeer"
                 type="button"
                 title="Vermeer, Girl with a Pearl Earring (public domain)"
               >
-                <img src="./stock/vermeer.jpg" alt="" /><span>Vermeer</span>
+                <img data-src="stock/vermeer.jpg" alt="" /><span>Vermeer</span>
               </button>
               <button
                 data-sample="vangogh"
                 type="button"
                 title="Van Gogh, Self-Portrait, 1887 (public domain)"
               >
-                <img src="./stock/vangogh.jpg" alt="" /><span>Van Gogh</span>
+                <img data-src="stock/vangogh.jpg" alt="" /><span>Van Gogh</span>
               </button>
               <button
                 data-sample="homer"
                 type="button"
                 title="Winslow Homer, Breezing Up (public domain)"
               >
-                <img src="./stock/homer.jpg" alt="" /><span>Homer</span>
+                <img data-src="stock/homer.jpg" alt="" /><span>Homer</span>
               </button>
             </div>
             <div class="row">
               <label class="file">
                 <input type="file" id="imageFile" accept="image/*" />
-                <span>&#8613; upload picture</span>
+                <span>&#8613; picture</span>
               </label>
-              <label class="file">
+              <label
+                class="file"
+                title="Optional: white subject on black, made with tools/make_mask.py. Lets the background paint behind a finished subject."
+              >
                 <input type="file" id="maskFile" accept="image/*" />
-                <span>&#8613; upload figure mask</span>
+                <span>&#8613; figure mask</span>
               </label>
             </div>
-            <p class="hint">
-              The mask is optional: white subject on black, made with
-              <a href="https://github.com/philipfweiss/autoportrait/blob/main/tools/make_mask.py"
-                >make_mask.py</a
-              >. It lets the background paint behind a finished subject.
-            </p>
           </fieldset>
 
           <fieldset>
@@ -121,76 +115,87 @@
             <label class="check">
               <input type="checkbox" id="focusMode" />
               click the canvas to add focus points
+              <button id="clearFocus" type="button" class="ghost">clear</button>
             </label>
-            <button id="clearFocus" type="button" class="ghost">clear focus points</button>
           </fieldset>
 
           <fieldset>
             <legend>dials</legend>
-            <label
+            <label class="seed-row"
               >seed <input type="number" id="seed" value="42" />
-              <button id="dice" type="button" class="ghost" title="roll a new seed">
+              <button id="dice" type="button" class="ghost" title="roll a new seed (s)">
                 &#127922;
               </button></label
             >
-            <label
-              >tempo
-              <input type="range" id="tempo" min="0.25" max="3" step="0.05" value="1" /><output
-                id="tempoOut"
-                >1.0×</output
-              ></label
-            >
-            <label
-              >regions <input type="range" id="k" min="3" max="12" step="1" value="7" /><output
-                id="kOut"
-                >7</output
-              ></label
-            >
-            <label
-              >big brush
-              <input type="range" id="big" min="40" max="220" step="5" value="110" /><output
-                id="bigOut"
-                >110</output
-              ></label
-            >
-            <label
-              >small brush
-              <input type="range" id="small" min="20" max="120" step="5" value="55" /><output
-                id="smallOut"
-                >55</output
-              ></label
-            >
-            <label
-              >sketch <input type="range" id="sketch" min="0" max="30" step="1" value="13" /><output
-                id="sketchOut"
-                >13s</output
-              ></label
-            >
-            <label
-              >washes <input type="range" id="wash" min="5" max="90" step="1" value="30" /><output
-                id="washOut"
-                >30s</output
-              ></label
-            >
+            <div class="dial-grid">
+              <label
+                >tempo
+                <input type="range" id="tempo" min="0.25" max="3" step="0.05" value="1" /><output
+                  id="tempoOut"
+                  >1.0×</output
+                ></label
+              >
+              <label
+                >regions <input type="range" id="k" min="3" max="12" step="1" value="7" /><output
+                  id="kOut"
+                  >7</output
+                ></label
+              >
+              <label
+                >big brush
+                <input type="range" id="big" min="40" max="220" step="5" value="110" /><output
+                  id="bigOut"
+                  >110</output
+                ></label
+              >
+              <label
+                >small brush
+                <input type="range" id="small" min="20" max="120" step="5" value="55" /><output
+                  id="smallOut"
+                  >55</output
+                ></label
+              >
+              <label
+                >sketch
+                <input type="range" id="sketch" min="0" max="30" step="1" value="13" /><output
+                  id="sketchOut"
+                  >13s</output
+                ></label
+              >
+              <label
+                >washes <input type="range" id="wash" min="5" max="90" step="1" value="30" /><output
+                  id="washOut"
+                  >30s</output
+                ></label
+              >
+            </div>
             <label>paper <input type="color" id="paper" value="#fbf6ea" /></label>
           </fieldset>
 
           <fieldset>
             <legend>run &amp; export</legend>
             <div class="row">
-              <button id="paint" type="button" class="primary">paint again</button>
+              <button id="paint" type="button" class="primary" title="repaint (r)">
+                paint again
+              </button>
               <button id="finish" type="button">skip to end</button>
+              <button id="share" type="button" title="copy a link that reproduces these dials">
+                copy link
+              </button>
             </div>
             <div class="row">
-              <button id="gif" type="button">export GIF</button>
-              <button id="video" type="button">export video</button>
-              <button id="html" type="button">export HTML</button>
+              <button id="gif" type="button" title="renders the timeline offscreen">GIF</button>
+              <button id="video" type="button" title="records a live replay at real duration">
+                video
+              </button>
+              <button
+                id="html"
+                type="button"
+                title="a self-contained page that repaints this exact painting"
+              >
+                HTML
+              </button>
             </div>
-            <p class="hint">
-              GIF renders the timeline offscreen. Video records a live replay (takes the painting's
-              real duration). HTML downloads a self-contained page that repaints this exact
-              painting.
-            </p>
           </fieldset>
         </aside>
       </div>

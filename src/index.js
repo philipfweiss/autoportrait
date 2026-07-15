@@ -170,6 +170,13 @@ export function paint(canvas, options = {}) {
         area: r.area,
         color: r.color,
       })),
+      // the schedule: enough for a host to mirror the performance in its UI
+      schedule: plan.groups.map((g) => ({
+        kind: g.kind,
+        region: g.region ?? null,
+        t0: g.t0,
+        t1: g.t1,
+      })),
     });
     if (opts.autostart) {
       if (reduced) runner.seek(plan.total);
