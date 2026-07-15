@@ -163,7 +163,13 @@ export function paint(canvas, options = {}) {
 
     emit("ready", {
       seed,
-      regions: regions.map((r) => ({ name: r.name, tags: [...r.tags], area: r.area })),
+      total: plan.total,
+      regions: regions.map((r) => ({
+        name: r.name,
+        tags: [...r.tags],
+        area: r.area,
+        color: r.color,
+      })),
     });
     if (opts.autostart) {
       if (reduced) runner.seek(plan.total);
