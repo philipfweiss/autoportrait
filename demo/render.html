@@ -1,0 +1,230 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>autoportrait render fixture</title>
+  </head>
+  <body>
+    <canvas id="c"></canvas>
+    <script type="module">
+      // Fixture the media generators drive. Everything renders from the
+      // library itself with fixed seeds, so the README's figures regenerate
+      // truthfully whenever the engine changes.
+      import { GIFEncoder, quantize, applyPalette } from "gifenc";
+      import { paint, makeRng } from "../src/index.js";
+      import { grayOf } from "../src/analyze/luminance.js";
+      import { buildEdgeField } from "../src/analyze/edges.js";
+      import { buildClips } from "../src/analyze/mask.js";
+      import { buildRegions } from "../src/analyze/regions.js";
+      import { kmeansXY, pathOrder, makeStamp, centroid } from "../src/plan/strokes.js";
+
+      const IMG = "./philip.jpg";
+      const MASK = "./philip-mask.png";
+      const DS = 4;
+
+      const load = (src) =>
+        new Promise((res, rej) => {
+          const i = new Image();
+          i.onload = () => res(i);
+          i.onerror = rej;
+          i.src = src;
+        });
+
+      async function analysis() {
+        const img = await load(IMG);
+        const maskImg = await load(MASK);
+        const W = 1000,
+          H = 1000;
+        const mk = (w = W, h = H) => {
+          const c = document.createElement("canvas");
+          c.width = w;
+          c.height = h;
+          return c;
+        };
+        const colorL = mk();
+        colorL.getContext("2d").drawImage(img, 0, 0, W, H);
+        const data = colorL.getContext("2d").getImageData(0, 0, W, H);
+        const gray = grayOf(data);
+        const field = buildEdgeField(gray, W, H, DS);
+        const clips = buildClips(maskImg, W, H, field.EW, field.EH, mk);
+        const rng = makeRng(7);
+        const regions = buildRegions(data, W, H, DS, field.EW, field.EH, clips.figCell, 7, rng);
+        return { W, H, colorL, field, regions };
+      }
+
+      /** Frames of the painting at chosen fractions, composed as one strip. */
+      window.renderStages = async (fracs) => {
+        const canvas = document.getElementById("c");
+        const p = paint(canvas, {
+          image: IMG,
+          mask: MASK,
+          seed: 42,
+          autostart: false,
+          respectReducedMotion: false,
+        });
+        await p.ready;
+        const n = fracs.length;
+        const cell = 480;
+        const strip = document.createElement("canvas");
+        strip.width = cell * n + 8 * (n - 1);
+        strip.height = cell;
+        const sx = strip.getContext("2d");
+        sx.fillStyle = "#ffffff";
+        sx.fillRect(0, 0, strip.width, strip.height);
+        fracs.forEach((f, i) => {
+          p.seek(f * p.total);
+          sx.drawImage(canvas, i * (cell + 8), 0, cell, cell);
+        });
+        return strip.toDataURL("image/png");
+      };
+
+      /** The edge field: tangent ticks where the gradient is loud. */
+      window.renderEdgeField = async () => {
+        const { W, H, colorL, field } = await analysis();
+        const out = document.createElement("canvas");
+        out.width = W;
+        out.height = H;
+        const x = out.getContext("2d");
+        x.fillStyle = "#fbf6ea";
+        x.fillRect(0, 0, W, H);
+        x.globalAlpha = 0.18;
+        x.drawImage(colorL, 0, 0);
+        x.globalAlpha = 1;
+        x.strokeStyle = "#3b2f28";
+        x.lineWidth = 1.6;
+        for (let ey = 2; ey < field.EH - 2; ey += 3)
+          for (let ex = 2; ex < field.EW - 2; ex += 3) {
+            const i = ey * field.EW + ex;
+            const m = field.mag[i];
+            if (m <= 14) continue;
+            const a = field.ang[i];
+            const cx = ex * DS,
+              cy = ey * DS;
+            const len = Math.min(9, 3 + m * 0.06);
+            x.globalAlpha = Math.min(0.9, 0.25 + m * 0.008);
+            x.beginPath();
+            x.moveTo(cx - Math.cos(a) * len, cy - Math.sin(a) * len);
+            x.lineTo(cx + Math.cos(a) * len, cy + Math.sin(a) * len);
+            x.stroke();
+          }
+        return out.toDataURL("image/png");
+      };
+
+      /** The region map: each cluster in its mean color, labeled. */
+      window.renderRegions = async () => {
+        const { W, H, regions } = await analysis();
+        const out = document.createElement("canvas");
+        out.width = W;
+        out.height = H;
+        const x = out.getContext("2d");
+        x.fillStyle = "#fbf6ea";
+        x.fillRect(0, 0, W, H);
+        for (const r of regions) {
+          x.fillStyle = `rgb(${r.color.join(",")})`;
+          for (const c of r.cells) x.fillRect(c.x - DS / 2, c.y - DS / 2, DS, DS);
+        }
+        x.font = "600 30px ui-sans-serif, system-ui";
+        x.textAlign = "center";
+        for (const r of regions) {
+          const w = x.measureText(r.name).width + 26;
+          x.fillStyle = "rgba(251,246,234,.92)";
+          x.fillRect(r.mean.x - w / 2, r.mean.y - 24, w, 42);
+          x.fillStyle = "#1d1b18";
+          x.fillText(r.name, r.mean.x, r.mean.y + 6);
+        }
+        return out.toDataURL("image/png");
+      };
+
+      /** One region's sub-areas and the brush's travel path through them. */
+      window.renderPath = async () => {
+        const { W, H, regions } = await analysis();
+        const figures = regions.filter((r) => r.isFigure);
+        const pool = figures.length ? figures : regions;
+        const region = pool.reduce((a, b) => (b.cells.length > a.cells.length ? b : a));
+        const rng = makeRng(11);
+        const out = document.createElement("canvas");
+        out.width = W;
+        out.height = H;
+        const x = out.getContext("2d");
+        x.fillStyle = "#fbf6ea";
+        x.fillRect(0, 0, W, H);
+        const clusters = kmeansXY(region.cells, 4, rng);
+        const tones = ["#dbead4", "#f2e3c9", "#dee5ec", "#eed9d4"];
+        clusters.forEach((cl, i) => {
+          x.fillStyle = tones[i % tones.length];
+          for (const c of cl) x.fillRect(c.x - DS / 2, c.y - DS / 2, DS, DS);
+        });
+        x.strokeStyle = "#99392c";
+        x.fillStyle = "#99392c";
+        clusters.forEach((cl) => {
+          const stamps = [];
+          for (let i = 0; i < 14; i++) {
+            const c = cl[rng.int(cl.length)];
+            stamps.push(makeStamp(c.x, c.y, 10, 1, 0, 0, rng));
+          }
+          const path = pathOrder(stamps);
+          x.lineWidth = 3;
+          x.beginPath();
+          x.moveTo(path[0].x, path[0].y);
+          for (const s of path.slice(1)) x.lineTo(s.x, s.y);
+          x.stroke();
+          for (const s of path) {
+            x.beginPath();
+            x.arc(s.x, s.y, 6, 0, Math.PI * 2);
+            x.fill();
+          }
+        });
+        // crop to the region so the diagram fills its frame
+        const xs = region.cells.map((c) => c.x);
+        const ys = region.cells.map((c) => c.y);
+        const pad = 30;
+        const x0 = Math.max(0, Math.min(...xs) - pad);
+        const y0 = Math.max(0, Math.min(...ys) - pad);
+        const x1 = Math.min(W, Math.max(...xs) + pad);
+        const y1 = Math.min(H, Math.max(...ys) + pad);
+        const crop = document.createElement("canvas");
+        crop.width = x1 - x0;
+        crop.height = y1 - y0;
+        crop.getContext("2d").drawImage(out, x0, y0, x1 - x0, y1 - y0, 0, 0, x1 - x0, y1 - y0);
+        return crop.toDataURL("image/png");
+      };
+
+      /** The hero: the whole performance encoded as a gif, returned base64.
+          The gif plays at the painting's real duration: frame delays sum to
+          p.total, so the README shows the same performance a visitor gets. */
+      window.renderHero = async (n, size) => {
+        const canvas = document.getElementById("c");
+        const p = paint(canvas, {
+          image: IMG,
+          mask: MASK,
+          seed: 42,
+          autostart: false,
+          respectReducedMotion: false,
+        });
+        await p.ready;
+        const small = document.createElement("canvas");
+        small.width = size;
+        small.height = size;
+        const sx = small.getContext("2d");
+        const gif = GIFEncoder();
+        const frameDelay = Math.round((p.total * 1000) / n);
+        for (let i = 0; i <= n; i++) {
+          p.seek((i / n) * p.total);
+          sx.drawImage(canvas, 0, 0, size, size);
+          const { data } = sx.getImageData(0, 0, size, size);
+          const palette = quantize(data, 256);
+          gif.writeFrame(applyPalette(data, palette), size, size, {
+            palette,
+            delay: i === n ? 2600 : frameDelay,
+          });
+        }
+        gif.finish();
+        let bin = "";
+        const bytes = gif.bytes();
+        for (let i = 0; i < bytes.length; i += 0x8000)
+          bin += String.fromCharCode.apply(null, bytes.subarray(i, i + 0x8000));
+        return btoa(bin);
+      };
+    </script>
+  </body>
+</html>
