@@ -186,10 +186,9 @@ paint(canvas, {
 
 ## How it works
 
-The pipeline has three phases: analysis (what does the image contain),
+To make an autoportrait image, the image is pipelined in three phases: analysis (what does the image contain),
 planning (every mark and its timestamp), and playback (replay the plan
-against a clock). Because planning happens up front, seeking and
-reproducibility come for free.
+against a clock).
 
 <p align="center">
   <img src="docs/media/stages.png" alt="Fifteen stages of the painting: early sketch, full sketch, figure washes over the drawing, background arriving, the finished painting." />
