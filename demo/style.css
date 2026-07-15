@@ -4,7 +4,9 @@
   --ink: #1d1b18;
   --faded: #5b564e;
   --rule: #e4e1d9;
+  --rule-soft: #efece5;
   --accent: #99392c;
+  --serif: Iowan Old Style, Palatino, Georgia, serif;
 }
 
 * {
@@ -22,25 +24,29 @@ body {
 }
 
 .page {
-  max-width: 1180px;
+  max-width: 1220px;
   margin: 0 auto;
   padding: 2.5rem 1.5rem 4rem;
 }
 
 h1 {
-  font-family:
-    Iowan Old Style,
-    Palatino,
-    Georgia,
-    serif;
+  font-family: var(--serif);
   font-weight: 500;
   font-size: 2.2rem;
-  margin: 0 0 0.3rem;
+  margin: 0 0 0.35rem;
+}
+
+h1 .sub {
+  color: var(--faded);
+  font-style: italic;
+  font-weight: 400;
+  font-size: 1.4rem;
 }
 
 .tag {
   color: var(--faded);
   margin: 0 0 2rem;
+  max-width: 60ch;
 }
 
 .tag a {
@@ -49,31 +55,75 @@ h1 {
 
 .split {
   display: grid;
-  grid-template-columns: minmax(0, 1.4fr) minmax(280px, 1fr);
-  gap: 2rem;
+  grid-template-columns: minmax(0, 1.35fr) minmax(300px, 1fr);
+  gap: 2.2rem;
   align-items: start;
 }
+
+/* ---------- stage ---------- */
 
 .stage canvas {
   width: 100%;
   height: auto;
   background: var(--sheet);
   border: 1px solid var(--rule);
-  border-radius: 3px;
+  border-radius: 4px;
+  box-shadow: 0 10px 30px -18px rgba(29, 27, 24, 0.35);
   cursor: crosshair;
 }
 
 .caption {
   min-height: 1.4em;
-  font-family:
-    Iowan Old Style,
-    Palatino,
-    Georgia,
-    serif;
+  font-family: var(--serif);
   font-style: italic;
   color: var(--faded);
   text-align: center;
-  margin: 0.8rem 0 0.4rem;
+  margin: 0.7rem 0 0.5rem;
+}
+
+.timeline {
+  display: flex;
+  align-items: center;
+  gap: 0.7rem;
+}
+
+.timeline .icon {
+  width: 2.1rem;
+  height: 2.1rem;
+  padding: 0;
+  border-radius: 50%;
+  font-size: 0.72rem;
+  line-height: 1;
+  flex: none;
+}
+
+.timeline input[type="range"] {
+  flex: 1;
+  accent-color: var(--accent);
+}
+
+.timeline .time {
+  flex: none;
+  min-width: 7.5em;
+  text-align: right;
+  color: var(--faded);
+  font-variant-numeric: tabular-nums;
+  font-size: 0.85rem;
+}
+
+.regions {
+  margin-top: 1rem;
+}
+
+.regions-head {
+  margin: 0 0 0.45rem;
+  text-align: center;
+  font-size: 0.66rem;
+  font-weight: 600;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--faded);
+  cursor: help;
 }
 
 .legend {
@@ -86,45 +136,52 @@ h1 {
 .legend span {
   display: inline-flex;
   align-items: center;
-  gap: 0.35rem;
+  gap: 0.4rem;
   font-size: 0.78rem;
   color: var(--faded);
   border: 1px solid var(--rule);
   border-radius: 999px;
-  padding: 0.15rem 0.6rem;
+  padding: 0.16rem 0.65rem;
+  background: #fff;
 }
 
 .legend i {
-  width: 0.7rem;
-  height: 0.7rem;
+  width: 0.78rem;
+  height: 0.78rem;
   border-radius: 50%;
   display: inline-block;
+  box-shadow: inset 0 0 0 1px rgba(29, 27, 24, 0.15);
 }
+
+/* ---------- controls ---------- */
 
 .controls fieldset {
   border: 1px solid var(--rule);
-  border-radius: 4px;
-  margin: 0 0 1rem;
-  padding: 0.8rem 1rem;
+  border-radius: 6px;
+  margin: 0 0 1.1rem;
+  padding: 0.9rem 1.05rem 1rem;
+  background: #fffdfa;
 }
 
 .controls legend {
-  font-size: 0.72rem;
-  letter-spacing: 0.14em;
+  font-size: 0.68rem;
+  font-weight: 600;
+  letter-spacing: 0.18em;
   text-transform: uppercase;
   color: var(--accent);
-  padding: 0 0.4rem;
+  padding: 0 0.45rem;
 }
 
 .controls label {
   display: flex;
   align-items: center;
   gap: 0.6rem;
-  margin: 0.45rem 0;
+  margin: 0.5rem 0;
 }
 
 .controls label input[type="range"] {
   flex: 1;
+  accent-color: var(--accent);
 }
 
 .controls output {
@@ -132,10 +189,141 @@ h1 {
   text-align: right;
   color: var(--faded);
   font-variant-numeric: tabular-nums;
+  font-size: 0.88rem;
 }
 
 .controls input[type="number"] {
-  width: 8em;
+  width: 8.5em;
+  border: 1px solid var(--rule);
+  border-radius: 4px;
+  padding: 0.32rem 0.5rem;
+  font: inherit;
+}
+
+.controls select {
+  font: inherit;
+  border: 1px solid var(--rule);
+  border-radius: 4px;
+  padding: 0.32rem 0.4rem;
+  background: #fff;
+  flex: 1;
+}
+
+.controls input[type="color"] {
+  inline-size: 3.2rem;
+  block-size: 1.9rem;
+  border: 1px solid var(--rule);
+  border-radius: 4px;
+  padding: 2px;
+  background: #fff;
+}
+
+.hint {
+  font-size: 0.8rem;
+  color: var(--faded);
+  margin: 0.55rem 0 0;
+  line-height: 1.45;
+}
+
+.hint a {
+  color: var(--accent);
+}
+
+/* samples */
+
+.samples {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 0.55rem;
+  margin-bottom: 0.7rem;
+}
+
+.samples button {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.32rem;
+  padding: 0.45rem 0.3rem 0.4rem;
+  border: 1px solid var(--rule);
+  border-radius: 6px;
+  background: #fff;
+  cursor: pointer;
+  font-size: 0.74rem;
+  color: var(--faded);
+  transition:
+    border-color 0.15s,
+    box-shadow 0.15s;
+}
+
+.samples button img {
+  width: 100%;
+  aspect-ratio: 1;
+  object-fit: cover;
+  border-radius: 4px;
+}
+
+.samples button:hover {
+  border-color: var(--accent);
+}
+
+.samples button.active {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 1px var(--accent);
+  color: var(--ink);
+}
+
+/* buttons */
+
+button {
+  font: inherit;
+  border: 1px solid var(--rule);
+  background: #fff;
+  border-radius: 5px;
+  padding: 0.42rem 0.85rem;
+  cursor: pointer;
+  transition:
+    border-color 0.15s,
+    background 0.15s,
+    box-shadow 0.15s;
+}
+
+button:hover:not(:disabled) {
+  border-color: var(--accent);
+}
+
+button:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+
+button:disabled {
+  opacity: 0.55;
+  cursor: default;
+}
+
+button.primary {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: #fff;
+}
+
+button.primary:hover:not(:disabled) {
+  background: #7f2f24;
+}
+
+button.ghost {
+  border-color: transparent;
+  background: transparent;
+  color: var(--faded);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  padding-left: 0.3rem;
+  padding-right: 0.3rem;
+}
+
+button.ghost:hover:not(:disabled) {
+  color: var(--accent);
+  border-color: transparent;
 }
 
 .file input {
@@ -145,51 +333,29 @@ h1 {
 .file span {
   display: inline-block;
   border: 1px solid var(--rule);
-  border-radius: 3px;
-  padding: 0.3rem 0.7rem;
+  border-radius: 5px;
+  padding: 0.42rem 0.85rem;
   cursor: pointer;
+  background: #fff;
+  transition: border-color 0.15s;
 }
 
 .file span:hover {
   border-color: var(--accent);
 }
 
-button {
-  font: inherit;
-  border: 1px solid var(--rule);
-  background: #fff;
-  border-radius: 3px;
-  padding: 0.35rem 0.8rem;
-  cursor: pointer;
-}
-
-button:hover {
-  border-color: var(--accent);
-}
-
-button.primary {
-  background: var(--accent);
-  border-color: var(--accent);
-  color: #fff;
-}
-
 .row {
   display: flex;
   flex-wrap: wrap;
   gap: 0.5rem;
-}
-
-progress {
-  width: 100%;
-  margin-top: 0.8rem;
-  accent-color: var(--accent);
+  margin: 0.35rem 0;
 }
 
 .check {
   font-size: 0.9rem;
 }
 
-@media (max-width: 860px) {
+@media (max-width: 880px) {
   .split {
     grid-template-columns: 1fr;
   }

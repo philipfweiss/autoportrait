@@ -9,10 +9,13 @@
   <body>
     <main class="page">
       <header>
-        <h1>autoportrait</h1>
+        <h1>autoportrait <span class="sub">playground</span></h1>
         <p class="tag">
-          Paints your picture in front of the visitor: graphite first, then watercolor, one pigment
-          at a time. <a href="https://github.com/philipfweiss/autoportrait">GitHub</a>
+          Pick a sample or upload a picture, set the choreography, and watch the engine paint it.
+          Same seed, same painting.
+          <a href="https://github.com/philipfweiss/autoportrait"
+            >github.com/philipfweiss/autoportrait</a
+          >
         </p>
       </header>
 
@@ -20,26 +23,89 @@
         <section class="stage">
           <canvas id="canvas" width="1000" height="1000"></canvas>
           <p class="caption" id="caption">&nbsp;</p>
-          <div class="legend" id="legend"></div>
+
+          <div class="timeline">
+            <button
+              id="pause"
+              type="button"
+              class="icon"
+              title="pause / resume"
+              aria-label="pause or resume"
+            >
+              ❚❚
+            </button>
+            <input
+              type="range"
+              id="scrub"
+              min="0"
+              max="1000"
+              value="0"
+              step="1"
+              aria-label="scrub through the painting"
+            />
+            <span class="time" id="time">0.0s / 0.0s</span>
+          </div>
+
+          <div class="regions">
+            <p
+              class="regions-head"
+              title="The clusters the segmentation found. Paint order follows the preset, the order list, or your focus points."
+            >
+              detected regions
+            </p>
+            <div class="legend" id="legend"></div>
+          </div>
         </section>
 
         <aside class="controls">
           <fieldset>
             <legend>picture</legend>
-            <label class="file">
-              <input type="file" id="imageFile" accept="image/*" />
-              <span>choose an image</span>
-            </label>
-            <label class="file">
-              <input type="file" id="maskFile" accept="image/*" />
-              <span>figure mask (optional)</span>
-            </label>
-            <div class="row stock">
-              <button id="useDemo" type="button">demo portrait</button>
-              <button data-stock="stock/vermeer.jpg" type="button">Vermeer</button>
-              <button data-stock="stock/vangogh.jpg" type="button">Van Gogh</button>
-              <button data-stock="stock/homer.jpg" type="button">Homer</button>
+            <div class="samples" id="samples">
+              <button
+                data-sample="philip"
+                type="button"
+                title="the demo portrait, with figure mask"
+              >
+                <img src="./philip.jpg" alt="" /><span>demo portrait</span>
+              </button>
+              <button
+                data-sample="vermeer"
+                type="button"
+                title="Vermeer, Girl with a Pearl Earring (public domain)"
+              >
+                <img src="./stock/vermeer.jpg" alt="" /><span>Vermeer</span>
+              </button>
+              <button
+                data-sample="vangogh"
+                type="button"
+                title="Van Gogh, Self-Portrait, 1887 (public domain)"
+              >
+                <img src="./stock/vangogh.jpg" alt="" /><span>Van Gogh</span>
+              </button>
+              <button
+                data-sample="homer"
+                type="button"
+                title="Winslow Homer, Breezing Up (public domain)"
+              >
+                <img src="./stock/homer.jpg" alt="" /><span>Homer</span>
+              </button>
             </div>
+            <div class="row">
+              <label class="file">
+                <input type="file" id="imageFile" accept="image/*" />
+                <span>&#8613; upload picture</span>
+              </label>
+              <label class="file">
+                <input type="file" id="maskFile" accept="image/*" />
+                <span>&#8613; upload figure mask</span>
+              </label>
+            </div>
+            <p class="hint">
+              The mask is optional: white subject on black, made with
+              <a href="https://github.com/philipfweiss/autoportrait/blob/main/tools/make_mask.py"
+                >make_mask.py</a
+              >. It lets the background paint behind a finished subject.
+            </p>
           </fieldset>
 
           <fieldset>
@@ -54,16 +120,18 @@
             </label>
             <label class="check">
               <input type="checkbox" id="focusMode" />
-              click the canvas to set focus points
+              click the canvas to add focus points
             </label>
-            <button id="clearFocus" type="button">clear focus</button>
+            <button id="clearFocus" type="button" class="ghost">clear focus points</button>
           </fieldset>
 
           <fieldset>
             <legend>dials</legend>
             <label
               >seed <input type="number" id="seed" value="42" />
-              <button id="dice" type="button" title="new seed">🎲</button></label
+              <button id="dice" type="button" class="ghost" title="roll a new seed">
+                &#127922;
+              </button></label
             >
             <label
               >tempo
@@ -108,14 +176,21 @@
           </fieldset>
 
           <fieldset>
-            <legend>run</legend>
+            <legend>run &amp; export</legend>
             <div class="row">
-              <button id="paint" type="button" class="primary">paint</button>
-              <button id="pause" type="button">pause</button>
+              <button id="paint" type="button" class="primary">paint again</button>
               <button id="finish" type="button">skip to end</button>
-              <button id="gif" type="button">export GIF</button>
             </div>
-            <progress id="progress" max="1" value="0"></progress>
+            <div class="row">
+              <button id="gif" type="button">export GIF</button>
+              <button id="video" type="button">export video</button>
+              <button id="html" type="button">export HTML</button>
+            </div>
+            <p class="hint">
+              GIF renders the timeline offscreen. Video records a live replay (takes the painting's
+              real duration). HTML downloads a self-contained page that repaints this exact
+              painting.
+            </p>
           </fieldset>
         </aside>
       </div>
