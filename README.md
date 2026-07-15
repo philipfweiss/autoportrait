@@ -14,7 +14,7 @@ There are no dependencies and no runtime ML.
 I love timelapses of painters at work, and I wondered whether the effect
 could be replicated in software: the underdrawing going down first, the
 washes pooling, the subject finished before the world behind it. The visual
-style is modeled on the sketch-then-color announcement portraits
+style is inspired by the sketch-then-color announcement portraits
 [Niklas Elmehed paints for the Nobel Prizes](https://physicsworld.com/a/meet-the-artist-behind-the-nobel-portraits-how-to-avoid-nobelitus/).
 I built the engine for [my personal site](https://philipweiss.net), where it
 paints my portrait for each visitor. The animation above plays at the real
