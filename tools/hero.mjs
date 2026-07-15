@@ -10,7 +10,7 @@ await withPage(async (page, errors, base) => {
   await page.goto(`${base}/render.html`);
   page.setDefaultTimeout(300000);
 
-  const b64 = await page.evaluate(() => window.renderHero(120, 340));
+  const b64 = await page.evaluate(() => window.renderHero(176, 320));
   writeFileSync(OUT, Buffer.from(b64, "base64"));
   console.log(
     `wrote docs/media/hero.gif (${(Buffer.from(b64, "base64").length / 1e6).toFixed(1)} MB)`,

@@ -15,7 +15,12 @@ await withPage(async (page, errors, base) => {
   await page.goto(`${base}/render.html`);
   page.setDefaultTimeout(120000);
 
-  save("stages.png", await page.evaluate(() => window.renderStages([0.08, 0.2, 0.38, 0.62, 1])));
+  save(
+    "stages.png",
+    await page.evaluate(() =>
+      window.renderStages([0.05, 0.12, 0.2, 0.28, 0.34, 0.44, 0.55, 0.68, 0.82, 1]),
+    ),
+  );
   save("edge-field.png", await page.evaluate(() => window.renderEdgeField()));
   save("regions.png", await page.evaluate(() => window.renderRegions()));
   save("path.png", await page.evaluate(() => window.renderPath()));

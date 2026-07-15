@@ -52,8 +52,8 @@
         return { W, H, colorL, field, regions };
       }
 
-      /** Frames of the painting at chosen fractions, composed as one strip. */
-      window.renderStages = async (fracs) => {
+      /** Frames of the painting at chosen fractions, composed as a grid. */
+      window.renderStages = async (fracs, cols = 5) => {
         const canvas = document.getElementById("c");
         const p = paint(canvas, {
           image: IMG,
@@ -63,19 +63,22 @@
           respectReducedMotion: false,
         });
         await p.ready;
-        const n = fracs.length;
         const cell = 480;
-        const strip = document.createElement("canvas");
-        strip.width = cell * n + 8 * (n - 1);
-        strip.height = cell;
-        const sx = strip.getContext("2d");
+        const gap = 8;
+        const rows = Math.ceil(fracs.length / cols);
+        const grid = document.createElement("canvas");
+        grid.width = cell * cols + gap * (cols - 1);
+        grid.height = cell * rows + gap * (rows - 1);
+        const sx = grid.getContext("2d");
         sx.fillStyle = "#ffffff";
-        sx.fillRect(0, 0, strip.width, strip.height);
+        sx.fillRect(0, 0, grid.width, grid.height);
         fracs.forEach((f, i) => {
           p.seek(f * p.total);
-          sx.drawImage(canvas, i * (cell + 8), 0, cell, cell);
+          const col = i % cols;
+          const row = (i / cols) | 0;
+          sx.drawImage(canvas, col * (cell + gap), row * (cell + gap), cell, cell);
         });
-        return strip.toDataURL("image/png");
+        return grid.toDataURL("image/png");
       };
 
       /** The edge field: tangent ticks where the gradient is loud. */
@@ -206,15 +209,32 @@
         small.width = size;
         small.height = size;
         const sx = small.getContext("2d");
+
+        // one palette for the whole gif, sampled from keyframes across the
+        // performance: per-frame palettes shimmer, one shared palette holds
+        // still and compresses far better
+        const samples = [];
+        for (const f of [0.12, 0.35, 0.7, 1]) {
+          p.seek(f * p.total);
+          sx.drawImage(canvas, 0, 0, size, size);
+          samples.push(sx.getImageData(0, 0, size, size).data);
+        }
+        const merged = new Uint8Array(samples.reduce((s, a) => s + a.length, 0));
+        let off = 0;
+        for (const s of samples) {
+          merged.set(s, off);
+          off += s.length;
+        }
+        const palette = quantize(merged, 256);
+
         const gif = GIFEncoder();
         const frameDelay = Math.round((p.total * 1000) / n);
         for (let i = 0; i <= n; i++) {
           p.seek((i / n) * p.total);
           sx.drawImage(canvas, 0, 0, size, size);
           const { data } = sx.getImageData(0, 0, size, size);
-          const palette = quantize(data, 256);
           gif.writeFrame(applyPalette(data, palette), size, size, {
-            palette,
+            ...(i === 0 ? { palette } : {}),
             delay: i === n ? 2600 : frameDelay,
           });
         }
