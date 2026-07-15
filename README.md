@@ -41,6 +41,21 @@ speed of the default configuration, about 48 seconds.
 - **Events.** Caption, progress, and ready callbacks for building UI around
   the performance.
 
+## The playground
+
+<p align="center">
+  <a href="https://philipweiss.net/autoportrait/">
+    <img src="docs/media/playground.png" width="760" alt="The playground: the portrait mid-painting on the left; sample pictures, choreography, dials, and export controls on the right." />
+  </a>
+</p>
+
+[philipweiss.net/autoportrait](https://philipweiss.net/autoportrait/) hosts the
+playground. Pick a sample painting or upload your own picture, steer the
+choreography with presets and focus points, scrub the timeline (the colored
+track marks the acts), and export the result as a GIF, a WebM video, or a
+self-contained HTML page that repaints it. Everything runs in the browser;
+uploads never leave your machine.
+
 ## Installation
 
 Not on npm yet. Install from GitHub, or vendor `src/` (plain ES modules, no

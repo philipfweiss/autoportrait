@@ -133,6 +133,8 @@ h1 .sub {
   font-size: 0.62rem;
   line-height: 1;
   flex: none;
+  justify-content: center;
+  gap: 0;
 }
 
 .timeline input[type="range"] {

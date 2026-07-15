@@ -27,6 +27,13 @@ await withPage(async (page, errors, base) => {
   save("regions.png", await page.evaluate(() => window.renderRegions()));
   save("path.png", await page.evaluate(() => window.renderPath()));
 
+  // the playground itself, mid-performance
+  await page.setViewportSize({ width: 1360, height: 920 });
+  await page.goto(`${base}/`);
+  await page.waitForTimeout(21000);
+  await page.screenshot({ path: OUT + "playground.png" });
+  console.log("wrote docs/media/playground.png");
+
   if (errors.length) {
     console.error(errors.join("\n"));
     process.exit(1);
