@@ -1,0 +1,120 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>autoportrait playground</title>
+    <link rel="stylesheet" href="./style.css" />
+  </head>
+  <body>
+    <main class="page">
+      <header>
+        <h1>autoportrait</h1>
+        <p class="tag">
+          Paints your picture in front of the visitor: graphite first, then watercolor, one pigment
+          at a time. <a href="https://github.com/philipfweiss/autoportrait">GitHub</a>
+        </p>
+      </header>
+
+      <div class="split">
+        <section class="stage">
+          <canvas id="canvas" width="1000" height="1000"></canvas>
+          <p class="caption" id="caption">&nbsp;</p>
+          <div class="legend" id="legend"></div>
+        </section>
+
+        <aside class="controls">
+          <fieldset>
+            <legend>picture</legend>
+            <label class="file">
+              <input type="file" id="imageFile" accept="image/*" />
+              <span>choose an image</span>
+            </label>
+            <label class="file">
+              <input type="file" id="maskFile" accept="image/*" />
+              <span>figure mask (optional)</span>
+            </label>
+            <button id="useDemo" type="button">use the demo portrait</button>
+          </fieldset>
+
+          <fieldset>
+            <legend>choreography</legend>
+            <label
+              >preset
+              <select id="preset">
+                <option value="portraitist">portraitist (subject first)</option>
+                <option value="landscapist">landscapist (world first)</option>
+                <option value="printmaker">printmaker (drawing, then light to dark)</option>
+              </select>
+            </label>
+            <label class="check">
+              <input type="checkbox" id="focusMode" />
+              click the canvas to set focus points
+            </label>
+            <button id="clearFocus" type="button">clear focus</button>
+          </fieldset>
+
+          <fieldset>
+            <legend>dials</legend>
+            <label
+              >seed <input type="number" id="seed" value="42" />
+              <button id="dice" type="button" title="new seed">🎲</button></label
+            >
+            <label
+              >tempo
+              <input type="range" id="tempo" min="0.25" max="3" step="0.05" value="1" /><output
+                id="tempoOut"
+                >1.0×</output
+              ></label
+            >
+            <label
+              >regions <input type="range" id="k" min="3" max="12" step="1" value="7" /><output
+                id="kOut"
+                >7</output
+              ></label
+            >
+            <label
+              >big brush
+              <input type="range" id="big" min="40" max="220" step="5" value="110" /><output
+                id="bigOut"
+                >110</output
+              ></label
+            >
+            <label
+              >small brush
+              <input type="range" id="small" min="20" max="120" step="5" value="55" /><output
+                id="smallOut"
+                >55</output
+              ></label
+            >
+            <label
+              >sketch <input type="range" id="sketch" min="0" max="30" step="1" value="13" /><output
+                id="sketchOut"
+                >13s</output
+              ></label
+            >
+            <label
+              >washes <input type="range" id="wash" min="5" max="90" step="1" value="30" /><output
+                id="washOut"
+                >30s</output
+              ></label
+            >
+            <label>paper <input type="color" id="paper" value="#fbf6ea" /></label>
+          </fieldset>
+
+          <fieldset>
+            <legend>run</legend>
+            <div class="row">
+              <button id="paint" type="button" class="primary">paint</button>
+              <button id="pause" type="button">pause</button>
+              <button id="finish" type="button">skip to end</button>
+              <button id="gif" type="button">export GIF</button>
+            </div>
+            <progress id="progress" max="1" value="0"></progress>
+          </fieldset>
+        </aside>
+      </div>
+    </main>
+    <script type="module" src="./main.js"></script>
+  </body>
+</html>

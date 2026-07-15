@@ -1,0 +1,196 @@
+:root {
+  --paper: #fcfbf8;
+  --sheet: #fbf6ea;
+  --ink: #1d1b18;
+  --faded: #5b564e;
+  --rule: #e4e1d9;
+  --accent: #99392c;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  background: var(--paper);
+  color: var(--ink);
+  font:
+    15px/1.5 ui-sans-serif,
+    system-ui,
+    sans-serif;
+}
+
+.page {
+  max-width: 1180px;
+  margin: 0 auto;
+  padding: 2.5rem 1.5rem 4rem;
+}
+
+h1 {
+  font-family:
+    Iowan Old Style,
+    Palatino,
+    Georgia,
+    serif;
+  font-weight: 500;
+  font-size: 2.2rem;
+  margin: 0 0 0.3rem;
+}
+
+.tag {
+  color: var(--faded);
+  margin: 0 0 2rem;
+}
+
+.tag a {
+  color: var(--accent);
+}
+
+.split {
+  display: grid;
+  grid-template-columns: minmax(0, 1.4fr) minmax(280px, 1fr);
+  gap: 2rem;
+  align-items: start;
+}
+
+.stage canvas {
+  width: 100%;
+  height: auto;
+  background: var(--sheet);
+  border: 1px solid var(--rule);
+  border-radius: 3px;
+  cursor: crosshair;
+}
+
+.caption {
+  min-height: 1.4em;
+  font-family:
+    Iowan Old Style,
+    Palatino,
+    Georgia,
+    serif;
+  font-style: italic;
+  color: var(--faded);
+  text-align: center;
+  margin: 0.8rem 0 0.4rem;
+}
+
+.legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+  justify-content: center;
+}
+
+.legend span {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  font-size: 0.78rem;
+  color: var(--faded);
+  border: 1px solid var(--rule);
+  border-radius: 999px;
+  padding: 0.15rem 0.6rem;
+}
+
+.legend i {
+  width: 0.7rem;
+  height: 0.7rem;
+  border-radius: 50%;
+  display: inline-block;
+}
+
+.controls fieldset {
+  border: 1px solid var(--rule);
+  border-radius: 4px;
+  margin: 0 0 1rem;
+  padding: 0.8rem 1rem;
+}
+
+.controls legend {
+  font-size: 0.72rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--accent);
+  padding: 0 0.4rem;
+}
+
+.controls label {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  margin: 0.45rem 0;
+}
+
+.controls label input[type="range"] {
+  flex: 1;
+}
+
+.controls output {
+  min-width: 3.2em;
+  text-align: right;
+  color: var(--faded);
+  font-variant-numeric: tabular-nums;
+}
+
+.controls input[type="number"] {
+  width: 8em;
+}
+
+.file input {
+  display: none;
+}
+
+.file span {
+  display: inline-block;
+  border: 1px solid var(--rule);
+  border-radius: 3px;
+  padding: 0.3rem 0.7rem;
+  cursor: pointer;
+}
+
+.file span:hover {
+  border-color: var(--accent);
+}
+
+button {
+  font: inherit;
+  border: 1px solid var(--rule);
+  background: #fff;
+  border-radius: 3px;
+  padding: 0.35rem 0.8rem;
+  cursor: pointer;
+}
+
+button:hover {
+  border-color: var(--accent);
+}
+
+button.primary {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: #fff;
+}
+
+.row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+progress {
+  width: 100%;
+  margin-top: 0.8rem;
+  accent-color: var(--accent);
+}
+
+.check {
+  font-size: 0.9rem;
+}
+
+@media (max-width: 860px) {
+  .split {
+    grid-template-columns: 1fr;
+  }
+}
