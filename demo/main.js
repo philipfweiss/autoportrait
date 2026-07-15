@@ -147,6 +147,9 @@ function start() {
   state.paused = false;
   $("pause").textContent = "❚❚";
   state.painting = paint(canvas, currentOptions());
+  state.painting.ready.catch(() => {
+    $("caption").textContent = "that file could not be read as an image";
+  });
 }
 
 for (const [id, out, fmt] of [
@@ -406,7 +409,7 @@ $("html").addEventListener("click", () =>
 <body style="margin:0;display:grid;place-items:center;min-height:100vh;background:${opts.paper}">
 <canvas id="autoportrait" style="max-width:min(92vw,640px);height:auto"></canvas>
 <script type="module">
-import { paint } from "https://cdn.jsdelivr.net/gh/philipfweiss/autoportrait@main/src/index.js";
+import { paint } from "https://cdn.jsdelivr.net/npm/autoportrait@0.1/src/index.js";
 paint(document.getElementById("autoportrait"), ${JSON.stringify(opts, null, 2)});
 </script>
 </body>

@@ -4,6 +4,10 @@
 
 # autoportrait
 
+[![npm](https://img.shields.io/npm/v/autoportrait)](https://www.npmjs.com/package/autoportrait)
+[![ci](https://github.com/philipfweiss/autoportrait/actions/workflows/ci.yml/badge.svg)](https://github.com/philipfweiss/autoportrait/actions/workflows/ci.yml)
+[![license](https://img.shields.io/badge/license-MIT-8b3a2b)](LICENSE)
+
 **autoportrait** renders an image as a timed painting performance on an HTML
 canvas: a graphite underdrawing traced along the image's edge field, then
 watercolor washes applied region by region in a configurable order. Analysis
@@ -58,11 +62,15 @@ uploads never leave your machine.
 
 ## Installation
 
-Not on npm yet. Install from GitHub, or vendor `src/` (plain ES modules, no
-build step):
-
 ```bash
-npm install github:philipfweiss/autoportrait
+npm install autoportrait
+```
+
+Or skip the build entirely and import from a CDN; the package is plain ES
+modules:
+
+```js
+import { paint } from "https://cdn.jsdelivr.net/npm/autoportrait@0.1/src/index.js";
 ```
 
 ## Usage
